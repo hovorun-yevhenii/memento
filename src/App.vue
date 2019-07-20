@@ -1,31 +1,36 @@
 <template>
-  <div id="app">
-    {{msg}}
-  </div>
+    <div id="app">
+        <app-header></app-header>
+        <notes-list></notes-list>
+    </div>
 </template>
 
 <script>
-export default {
-  components: {
+    import AppHeader from './components/AppHeader'
+    import NotesList from './components/NotesList'
 
-  },
-  name: 'app',
-  data () {
-    return {
-      msg: 'Welcome'
+    export default {
+        name: 'app',
+        components: {
+            AppHeader,
+            NotesList
+        },
+        data() {
+            return {}
+        }
     }
-  }
-}
 </script>
 
 <style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+    @import 'style/global';
 
+    [id='app'] {
+      min-height: 100vh;
+      background-color: $main-dark;
+      color: $main-text;
+      &, & * {
+        font-family: $roboto;
+          color: $main-text;
+      }
+    }
 </style>
