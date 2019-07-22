@@ -17,27 +17,32 @@ export const mutations = {
   SET_NOTE_TO_UPDATE(state, note) {
     state.noteToUpdate = note;
   },
-  OPEN_MODAL_FORM(state) {
+  OPEN_FORM(state) {
     state.isModalFormOpen = true;
   },
-  CLOSE_MODAL_FORM(state) {
+  CLOSE_FORM(state) {
     state.isModalFormOpen = false;
   },
-  UPDATE_NOTE(state, note) {
-    const index = state.notes.findIndex(e => e.id === note.id);
-    const updated = new Date();
+  UPDATE_NOTE_PROPERTY(state, {noteId, prop, value}) {
+    const currentDate = new Date();
+    const noteIndex = state.notes.findIndex(e => e.id === noteId);
 
-    note.updated = updated.toISOString();
-    state.notes.splice(index, 1, note);
+    Object.assign(state.notes[noteIndex], {
+      updated: currentDate.toISOString(),
+      [prop]: value
+    })
   },
   CREATE_NOTE(state, note) {
-    let id = 1;
+    const currentDate = new Date();
+    let availableId = 1;
 
-    while (state.notes.some(item => item.id === id)) id++;
+    while (state.notes.some(item => item.id === availableId)) availableId++;
 
-    console.log(id)
+    Object.assign(note, {
+      updated: currentDate.toISOString(),
+      id: availableId
+    });
 
-    note.id = id;
     state.notes.unshift(note);
   }
 };
@@ -49,19 +54,16 @@ export const actions = {
 
     commit('SET_NOTES_FROM_LS', notes);
   },
-  setNoteToUpdate({commit}, note) {
+  openForm({commit}, note) {
     commit('SET_NOTE_TO_UPDATE', note);
-    commit('OPEN_MODAL_FORM');
+    commit('OPEN_FORM');
   },
-  openModalForm({commit}) {
-    commit('OPEN_MODAL_FORM');
+  closeForm({commit}) {
+    commit('SET_NOTE_TO_UPDATE', null);
+    commit('CLOSE_FORM');
   },
-  closeModalForm({commit}) {
-    commit('CLOSE_MODAL_FORM');
-    commit('SET_NOTE_TO_UPDATE');
-  },
-  updateNote({commit}, note) {
-    commit('UPDATE_NOTE', note);
+  updateNoteProperty({commit}, change) {
+    commit('UPDATE_NOTE_PROPERTY', change);
   },
   createNote({commit}, note) {
     commit('CREATE_NOTE', note);

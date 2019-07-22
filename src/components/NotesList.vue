@@ -7,7 +7,7 @@
     </div>
 
     <modal-form>
-      <note-item :editMode="true" :note="noteToUpdate"></note-item>
+      <note-item :fullViewMode="true" :note="noteToUpdate"></note-item>
     </modal-form>
   </div>
 </template>
@@ -34,23 +34,24 @@
             ...mapGetters({
                 notes: 'getAllNotes',
                 noteToUpdate: 'getNoteToUpdate'
-             })
+            })
         },
         watch: {
-            // notes(newNotes, oldNotes) {
-            //     console.log(newNotes.length !== oldNotes.length)
-            //     if (this.packery && newNotes.length !== oldNotes.length) {
-            //         console.log('Notes length');
-            //         this.packery.layout()
-            //     }
-            // }
+            notes(newNotes, oldNotes) {
+                if (this.packery) this.updateLayout()
+            }
         },
         created() {
-          this.$store.dispatch('getNotesFromLS').then(() => this.initLayout())
+            this.$store.dispatch('getNotesFromLS').then(() => this.initLayout())
         },
         methods: {
+            updateLayout() {
+                console.log('update')
+                this.packery.layout();
+            },
             initLayout() {
                 const list = document.querySelector('.list');
+
                 this.packery = new Packery(list, {
                     itemSelector: '.note',
                     columnWidth: 238,
@@ -65,8 +66,8 @@
                 });
 
                 this.packery.on('dragItemPositioned', draggedItem => {
-                    const index =  this.packery.items.indexOf(draggedItem);
-                    const nextItem =  this.packery.items[index + 1];
+                    const index = this.packery.items.indexOf(draggedItem);
+                    const nextItem = this.packery.items[index + 1];
 
                     if (nextItem) list.insertBefore(draggedItem.element, nextItem.element);
                     else list.appendChild(draggedItem.element);

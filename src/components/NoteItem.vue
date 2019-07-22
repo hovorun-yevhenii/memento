@@ -1,14 +1,16 @@
 <template>
-  <div class="note" :class="{'editing': editMode}">
+  <div class="note" :class="{'full-view': fullViewMode}">
 
     <input class="note__title"
            v-model="form.title"
+           @input="changeHandler($event, 'title')"
            @keypress.enter="focusTextarea"
            placeholder="Введите заголовок"/>
 
     <textarea v-if="form.type === 'text'"
               class="note__text"
               v-model="form.text"
+              @input="changeHandler($event, 'text')"
               ref="textarea"
               placeholder="Текст заметки">
     </textarea>
@@ -22,14 +24,16 @@
       </div>
     </template>
 
-    <div v-if="form.updated" class="note__updated text--small">updated: {{getLocalTime(form.updated)}}</div>
+    <div v-if="form.updated" class="note__updated text--small">
+      updated: {{getFormattedTime(form.updated)}}
+    </div>
 
     <div class="note__controls">
-      <app-button v-if="!editMode" type="drag" class="drag"></app-button>
-      <app-button type="color"></app-button>
-      <app-button type="image"></app-button>
-      <app-button v-if="editMode" type="save" @click="closeUpdateForm"></app-button>
-      <app-button v-if="!editMode" type="edit" @click="openUpdateForm"></app-button>
+      <app-button v-if="!fullViewMode" type="drag" class="drag"/>
+      <app-button type="color"/>
+      <app-button type="image"/>
+      <app-button v-if="fullViewMode" type="save" @click="closeForm"/>
+      <app-button v-if="!fullViewMode" type="edit" @click="openForm"/>
     </div>
   </div>
 </template>
@@ -47,7 +51,7 @@
                 type: Object,
                 required: false
             },
-            editMode: {
+            fullViewMode: {
                 type: Boolean,
                 required: false
             }
@@ -69,41 +73,39 @@
         },
         computed: {
             form() {
-                return this.note || this.emptyNote
+                return this.note || this.emptyNote;
             }
         },
-        watch: {
-            form: {
-                handler(form) {
-                    if (form.text) this.fitTextareaHeight();
-                    if (form.id) this.$store.dispatch('updateNote', form);
-                },
-                deep: true
-            }
-        },
-
         mounted() {
             this.fitTextareaHeight();
         },
         beforeDestroy() {
             const note = this.form;
-            const shouldCreateNote = !note.id && note.title || note.text || note.image || note.listItems.length;
+            const shouldCreateNote = !note.id && (note.title || note.text || note.image || note.listItems.length);
 
-            console.log('beforeDestroy')
-
-            if (shouldCreateNote) this.$store.dispatch('createNote', this.form);
+            if (shouldCreateNote) this.$store.dispatch('createNote', note);
         },
         methods: {
-            openUpdateForm() {
-                this.$store.dispatch('setNoteToUpdate', this.form)
+            changeHandler(event, prop) {
+                if (prop === 'text') this.fitTextareaHeight();
+                if (!this.form.id) return;
+
+                this.$store.dispatch('updateNoteProperty', {
+                    noteId: this.form.id,
+                    prop,
+                    value: event.target.value
+                });
             },
-            closeUpdateForm() {
-                this.$store.dispatch('closeModalForm', this.form)
+            openForm() {
+                this.$store.dispatch('openForm', this.form)
+            },
+            closeForm() {
+                this.$store.dispatch('closeForm', this.form)
             },
             focusTextarea() {
                 const textarea = this.$refs.textarea;
 
-                if (textarea) textarea.focus()
+                if (textarea) textarea.focus();
             },
             fitTextareaHeight() {
                 const textarea = this.$refs.textarea;
@@ -112,14 +114,14 @@
                     textarea.style.height = `${textarea.scrollHeight + 16}px`;
                 }
             },
-            getLocalTime(iso) {
+            getFormattedTime(iso) {
                 const date = new Date(iso);
                 const hours = date.getHours();
                 const minutes = date.getMinutes();
                 const day = date.getDate();
-                const month = date.toLocaleString('default', {month: 'long'});
+                const month = date.toLocaleString('en-us', {month: 'long'});
 
-                return `${hours}:${minutes} ${month} ${day}`;
+                return `${month} ${day} ${hours}:${minutes}`;
             }
         }
     }
@@ -137,7 +139,7 @@
     color: #e8eaed;
     box-sizing: border-box;
 
-    &.editing {
+    &.full-view {
       width: 100%;
     }
 

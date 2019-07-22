@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <app-button big type="add" @click="openModalForm"/>
+    <app-button big type="add" @click="openForm"/>
   </div>
 </template>
 
@@ -13,8 +13,8 @@
             AppButton
         },
         methods: {
-            openModalForm() {
-                this.$store.dispatch('openModalForm')
+            openForm() {
+                this.$store.dispatch('openForm')
             }
         }
     }

@@ -1,7 +1,7 @@
 <template>
   <transition name="modal">
-    <div v-if="isOpen" class="modal" @click.self="closeForm">
-      <div class="modal__body">
+    <div v-if="isOpen" class="dialog" @mousedown.self="closeForm">
+      <div class="dialog__body">
         <slot/>
       </div>
     </div>
@@ -9,8 +9,7 @@
 </template>
 
 <script>
-  import NoteItem from './NoteItem'
-    import {mapGetters} from 'vuex'
+    import NoteItem from './NoteItem'
 
     export default {
         name: 'ModalForm',
@@ -18,13 +17,13 @@
             NoteItem
         },
         computed: {
-            ...mapGetters({
-                isOpen: 'modalFormIsOpen'
-            })
+            isOpen() {
+                return this.$store.getters.modalFormIsOpen;
+            }
         },
         methods: {
             closeForm() {
-                this.$store.dispatch('closeModalForm');
+                this.$store.dispatch('closeForm');
             }
         }
     }
@@ -33,7 +32,7 @@
 <style lang="scss" scoped>
   @import '../style/variables';
 
-  .modal {
+  .dialog {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -53,23 +52,6 @@
       box-sizing: border-box;
       border-radius: 8px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, .2);
-
-      .btn {
-        margin-top: 50px;
-      }
-    }
-
-    &__close-button {
-      position: absolute;
-      top: -46px;
-      right: -46px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      cursor: pointer;
     }
   }
 
