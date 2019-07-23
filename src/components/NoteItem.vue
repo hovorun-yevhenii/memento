@@ -1,16 +1,16 @@
 <template>
-  <div class="note" :class="{'full-view': fullViewMode}">
+  <div class="note" :class="{'full-view': fullViewMode}" :style="'background-color: var(--' + form.color +')'">
 
     <input class="note__title"
-           v-model="form.title"
-           @input="changeHandler($event, 'title')"
+           :value="form.title"
+           @input="textChangeHandler($event, 'title')"
            @keypress.enter="focusTextarea"
            placeholder="Введите заголовок"/>
 
     <textarea v-if="form.type === 'text'"
               class="note__text"
-              v-model="form.text"
-              @input="changeHandler($event, 'text')"
+              :value="form.text"
+              @input="textChangeHandler($event, 'text')"
               ref="textarea"
               placeholder="Текст заметки">
     </textarea>
@@ -30,7 +30,9 @@
 
     <div class="note__controls">
       <app-button v-if="!fullViewMode" type="drag" class="drag"/>
-      <app-button type="color"/>
+      <app-button type="color" @mouseenter.native="togglePicker(true)" @mouseleave.native="togglePicker()">
+        <color-picker v-if="showColorPicker" @change="colorChangeHandler"></color-picker>
+      </app-button>
       <app-button type="image"/>
       <app-button v-if="fullViewMode" type="save" @click="closeForm"/>
       <app-button v-if="!fullViewMode" type="edit" @click="openForm"/>
@@ -40,11 +42,13 @@
 
 <script>
     import AppButton from './AppButton'
+    import ColorPicker from './ColorPicker'
 
     export default {
         name: 'NoteItem',
         components: {
-            AppButton
+            AppButton,
+            ColorPicker
         },
         props: {
             note: {
@@ -58,13 +62,14 @@
         },
         data() {
             return {
+                showColorPicker: false,
                 emptyNote: {
                     id: '',
                     type: 'text',
                     title: '',
                     text: '',
                     listItems: [],
-                    color: '',
+                    color: 'default',
                     image: '',
                     isPinned: '',
                     updated: ''
@@ -86,15 +91,27 @@
             if (shouldCreateNote) this.$store.dispatch('createNote', note);
         },
         methods: {
-            changeHandler(event, prop) {
+            textChangeHandler(event, prop) {
                 if (prop === 'text') this.fitTextareaHeight();
-                if (!this.form.id) return;
-
-                this.$store.dispatch('updateNoteProperty', {
-                    noteId: this.form.id,
-                    prop,
-                    value: event.target.value
-                });
+                this.updateProperty(prop, event.target.value);
+            },
+            colorChangeHandler(colorName) {
+                this.updateProperty('color', colorName);
+                this.showColorPicker = false;
+            },
+            updateProperty(prop, value) {
+                if (this.form.id) {
+                    this.$store.dispatch('updateNoteProperty', {
+                        noteId: this.form.id,
+                        prop,
+                        value
+                    });
+                } else {
+                    this.form[prop] = value;
+                }
+            },
+            togglePicker(show) {
+                this.showColorPicker = show;
             },
             openForm() {
                 this.$store.dispatch('openForm', this.form)

@@ -18,6 +18,7 @@
     import Packery from 'packery'
     import Draggabilly from 'draggabilly'
     import {mapGetters} from 'vuex'
+    import colors from '../colorConfig'
 
     export default {
         name: 'NotesList',
@@ -43,6 +44,9 @@
         },
         created() {
             this.$store.dispatch('getNotesFromLS').then(() => this.initLayout())
+        },
+        mounted() {
+            Object.entries(colors).forEach(([name, hex]) => this.$el.style.setProperty(`--${name}`, hex));
         },
         methods: {
             updateLayout() {
