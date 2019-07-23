@@ -1,9 +1,11 @@
 <template>
   <div class="notes">
-    <div class="list">
-      <note-item v-for="note in notes"
+    <div class="list" ref="notes">
+      <note-item v-for="(note, index) in notes"
                  :key="note.id"
-                 :note="note"/>
+                 :note="note"
+                 :data-packery-id="index"
+                 @calculateLayout="calculateLayout"/>
     </div>
 
     <modal-form>
@@ -17,7 +19,7 @@
     import ModalForm from './ModalForm'
     import Packery from 'packery'
     import Draggabilly from 'draggabilly'
-    import {mapGetters} from 'vuex'
+    import {mapGetters, mapMutations} from 'vuex'
     import colors from '../colorConfig'
 
     export default {
@@ -38,44 +40,54 @@
             })
         },
         watch: {
-            notes(newNotes, oldNotes) {
-                if (this.packery) this.updateLayout()
+            notes(list) {
+                const mountedNotes = this.$refs.notes.children.length;
+                const actualNotes = list.length;
+
+                if (mountedNotes !== actualNotes) this.$nextTick(() => this.updateLayout());
             }
         },
         created() {
-            this.$store.dispatch('getNotesFromLS').then(() => this.initLayout())
+            this.getNotesFromLS();
+            this.updateLayout();
         },
         mounted() {
-            Object.entries(colors).forEach(([name, hex]) => this.$el.style.setProperty(`--${name}`, hex));
+            Object.entries(colors).forEach(([name, hex]) => {
+                this.$el.style.setProperty(`--${name}`, hex)
+            });
         },
         methods: {
+            ...mapMutations([
+                'getNotesFromLS',
+                'swapNotes'
+            ]),
             updateLayout() {
-                console.log('update')
-                this.packery.layout();
+                this.$nextTick(() => {
+                    if (this.packery) this.packery.destroy();
+
+                    this.packery = new Packery(this.$refs.notes, {
+                        itemSelector: '.note',
+                        columnWidth: 238,
+                        gutter: 16,
+                        transitionDuration: '0.25s'
+                    });
+
+                    this.packery.getItemElements().forEach(note => {
+                        this.packery.bindDraggabillyEvents(new Draggabilly(note, {handle: '.drag'}));
+                    });
+
+                    this.packery.on('dragItemPositioned', note => this.onDragEnd(note));
+                });
             },
-            initLayout() {
-                const list = document.querySelector('.list');
+            onDragEnd(note) {
+                const from = note.element.dataset.packeryId;
+                const to = this.packery.items.indexOf(note);
 
-                this.packery = new Packery(list, {
-                    itemSelector: '.note',
-                    columnWidth: 238,
-                    gutter: 16,
-                    transitionDuration: '0.25s'
-                });
-
-                this.packery.getItemElements().forEach(item => {
-                    const drag = new Draggabilly(item, {handle: '.drag'});
-
-                    this.packery.bindDraggabillyEvents(drag);
-                });
-
-                this.packery.on('dragItemPositioned', draggedItem => {
-                    const index = this.packery.items.indexOf(draggedItem);
-                    const nextItem = this.packery.items[index + 1];
-
-                    if (nextItem) list.insertBefore(draggedItem.element, nextItem.element);
-                    else list.appendChild(draggedItem.element);
-                });
+                this.swapNotes({from, to});
+                this.$nextTick(() => this.packery.layout());
+            },
+            calculateLayout() {
+                if (this.packery) this.packery.layout();
             }
         }
     }

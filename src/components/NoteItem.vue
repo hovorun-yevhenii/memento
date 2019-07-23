@@ -1,6 +1,11 @@
 <template>
   <div class="note" :class="{'full-view': fullViewMode}" :style="'background-color: var(--' + form.color +')'">
 
+    <div v-if="form.image" class="note__image">
+      <div class="note__image-close"></div>
+      <img :src="form.image" alt="note image">
+    </div>
+
     <input class="note__title"
            :value="form.title"
            @input="textChangeHandler($event, 'title')"
@@ -30,25 +35,27 @@
 
     <div class="note__controls">
       <app-button v-if="!fullViewMode" type="drag" class="drag"/>
-      <app-button type="color" @mouseenter.native="togglePicker(true)" @mouseleave.native="togglePicker()">
-        <color-picker v-if="showColorPicker" @change="colorChangeHandler"></color-picker>
-      </app-button>
-      <app-button type="image"/>
+      <color-input @change="colorChangeHandler"></color-input>
+      <image-input @change="imageChangeHandler"/>
+      <app-button type="delete" @click="deleteNote(form.id)"/>
       <app-button v-if="fullViewMode" type="save" @click="closeForm"/>
-      <app-button v-if="!fullViewMode" type="edit" @click="openForm"/>
+      <app-button v-if="!fullViewMode" type="edit" @click="openForm(form)"/>
     </div>
   </div>
 </template>
 
 <script>
     import AppButton from './AppButton'
-    import ColorPicker from './ColorPicker'
+    import ColorInput from './ColorInput'
+    import ImageInput from './ImageInput'
+    import {mapMutations} from 'vuex'
 
     export default {
         name: 'NoteItem',
         components: {
             AppButton,
-            ColorPicker
+            ColorInput,
+            ImageInput
         },
         props: {
             note: {
@@ -62,7 +69,6 @@
         },
         data() {
             return {
-                showColorPicker: false,
                 emptyNote: {
                     id: '',
                     type: 'text',
@@ -88,36 +94,29 @@
             const note = this.form;
             const shouldCreateNote = !note.id && (note.title || note.text || note.image || note.listItems.length);
 
-            if (shouldCreateNote) this.$store.dispatch('createNote', note);
+            if (shouldCreateNote) this.createNote(note);
         },
         methods: {
+            ...mapMutations([
+                'updateNoteProperty',
+                'createNote',
+                'openForm',
+                'closeForm',
+                'deleteNote'
+            ]),
             textChangeHandler(event, prop) {
                 if (prop === 'text') this.fitTextareaHeight();
                 this.updateProperty(prop, event.target.value);
             },
             colorChangeHandler(colorName) {
                 this.updateProperty('color', colorName);
-                this.showColorPicker = false;
+            },
+            imageChangeHandler(image) {
+                this.updateProperty('image', image);
             },
             updateProperty(prop, value) {
-                if (this.form.id) {
-                    this.$store.dispatch('updateNoteProperty', {
-                        noteId: this.form.id,
-                        prop,
-                        value
-                    });
-                } else {
-                    this.form[prop] = value;
-                }
-            },
-            togglePicker(show) {
-                this.showColorPicker = show;
-            },
-            openForm() {
-                this.$store.dispatch('openForm', this.form)
-            },
-            closeForm() {
-                this.$store.dispatch('closeForm', this.form)
+                if (this.form.id) this.updateNoteProperty({noteId: this.form.id, prop, value});
+                else this.form[prop] = value;
             },
             focusTextarea() {
                 const textarea = this.$refs.textarea;
@@ -128,7 +127,8 @@
                 const textarea = this.$refs.textarea;
 
                 if (textarea && textarea.scrollHeight > textarea.offsetHeight) {
-                    textarea.style.height = `${textarea.scrollHeight + 16}px`;
+                    this.$emit('calculateLayout');
+                    textarea.style.height = `${textarea.scrollHeight}px`;
                 }
             },
             getFormattedTime(iso) {
@@ -151,13 +151,25 @@
     width: 238px;
     padding: 12px;
     border-radius: 8px;
-    border: 1px solid #5F6368;
     background-color: #2D2E30;
     color: #e8eaed;
     box-sizing: border-box;
 
     &.full-view {
       width: 100%;
+    }
+
+    &__image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-height: 120px;
+      margin-bottom: 12px;
+      img {
+        max-width: inherit;
+        max-height: inherit;
+        border-radius: 8px;
+      }
     }
 
     &__title,
@@ -196,7 +208,7 @@
       display: flex;
 
       & > * {
-        margin-right: 8px;
+        margin-right: 12px;
       }
     }
   }

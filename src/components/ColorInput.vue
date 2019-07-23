@@ -1,23 +1,35 @@
 <template>
-  <transition name="picker">
-    <div class="picker">
-      <div class="color"
-           v-for="(hex, name) in colors"
-           :style="'background-color: var(--' + name + ')'"
-           @click="$emit('change', name)">
+  <app-button type="color" @mouseenter.native="togglePicker(true)" @mouseleave.native="togglePicker()">
+    <transition name="picker">
+      <div v-if="showColorPicker" class="picker">
+        <div class="color"
+             v-for="(hex, name) in colors"
+             :style="'background-color: var(--' + name + ')'"
+             @click="$emit('change', name)">
+        </div>
       </div>
-    </div>
-  </transition>
+    </transition>
+  </app-button>
 </template>
 
 <script>
+    import AppButton from './AppButton'
     import colors from '../colorConfig'
 
     export default {
         name: "ColorPicker",
+        components: {
+            AppButton
+        },
         data() {
             return {
+                showColorPicker: false,
                 colors
+            }
+        },
+        methods: {
+            togglePicker(show) {
+                this.showColorPicker = show;
             }
         }
     }

@@ -11,19 +11,22 @@ export const getters = {
 };
 
 export const mutations = {
-  SET_NOTES_FROM_LS(state, notes) {
-    state.notes = notes;
+  getNotesFromLS(state) {
+    const savedNotes = localStorage.getItem('mementoNotes');
+
+    state.notes = JSON.parse(savedNotes) || [];
   },
-  SET_NOTE_TO_UPDATE(state, note) {
+
+  openForm(state, note) {
     state.noteToUpdate = note;
-  },
-  OPEN_FORM(state) {
     state.isModalFormOpen = true;
   },
-  CLOSE_FORM(state) {
+
+  closeForm(state) {
     state.isModalFormOpen = false;
   },
-  UPDATE_NOTE_PROPERTY(state, {noteId, prop, value}) {
+
+  updateNoteProperty(state, {noteId, prop, value}) {
     const currentDate = new Date();
     const noteIndex = state.notes.findIndex(e => e.id === noteId);
 
@@ -32,7 +35,8 @@ export const mutations = {
       [prop]: value
     })
   },
-  CREATE_NOTE(state, note) {
+
+  createNote(state, note) {
     const currentDate = new Date();
     let availableId = 1;
 
@@ -44,28 +48,18 @@ export const mutations = {
     });
 
     state.notes.unshift(note);
+  },
+
+  deleteNote(state, noteId) {
+    const noteIndex = state.notes.findIndex(e => e.id === noteId);
+
+    state.notes.splice(noteIndex, 1);
+  },
+
+  swapNotes(state, {from, to}) {
+    const tempNote = state.notes[from];
+
+    state.notes[from] = state.notes[to];
+    state.notes.splice(to, 1, tempNote);
   }
-};
-
-export const actions = {
-  getNotesFromLS({commit}) {
-    const savedNotes = localStorage.getItem('mementoNotes');
-    const notes = JSON.parse(savedNotes) || [];
-
-    commit('SET_NOTES_FROM_LS', notes);
-  },
-  openForm({commit}, note) {
-    commit('SET_NOTE_TO_UPDATE', note);
-    commit('OPEN_FORM');
-  },
-  closeForm({commit}) {
-    commit('SET_NOTE_TO_UPDATE', null);
-    commit('CLOSE_FORM');
-  },
-  updateNoteProperty({commit}, change) {
-    commit('UPDATE_NOTE_PROPERTY', change);
-  },
-  createNote({commit}, note) {
-    commit('CREATE_NOTE', note);
-  },
 };

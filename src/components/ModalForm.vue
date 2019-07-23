@@ -23,7 +23,7 @@
         },
         methods: {
             closeForm() {
-                this.$store.dispatch('closeForm');
+                this.$store.commit('closeForm');
             }
         }
     }

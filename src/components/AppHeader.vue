@@ -14,7 +14,7 @@
         },
         methods: {
             openForm() {
-                this.$store.dispatch('openForm')
+                this.$store.commit('openForm')
             }
         }
     }
