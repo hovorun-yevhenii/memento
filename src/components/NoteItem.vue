@@ -6,27 +6,23 @@
       <img :src="form.image" alt="note image">
     </div>
 
-    <input class="note__title"
-           :value="form.title"
-           @input="textChangeHandler($event, 'title')"
-           @keypress.enter="focusTextarea"
-           placeholder="Введите заголовок"/>
+    <app-textarea :value="form.title"
+                  class="heading"
+                  placeholder="Введите заголовок"
+                  @change="value => changeNote(value, 'title')"/>
 
-    <textarea v-if="form.type === 'text'"
-              class="note__text"
-              :value="form.text"
-              @input="textChangeHandler($event, 'text')"
-              ref="textarea"
-              placeholder="Текст заметки">
-    </textarea>
+    <app-textarea v-if="!isList"
+                  class="text"
+                  :value="form.text"
+                  placeholder="Текст заметки"
+                  @change="value => changeNote(value, 'text')"/>
 
-    <template v-if="form.type === 'list'">
-      <div v-for="item in form.listItems">
-        <label>
-          <input type="checkbox" v-model="item.checked">
-          {{item.text}}
-        </label>
+    <template v-if="isList">
+      <div class="note-list text" v-for="item in form.listItems">
+        <input type="checkbox" class="note-list__checkbox" v-model="item.checked">
+        <input type="text" class="note-list__text" :class="{'checked': item.checked}" placeholder="Введите текст" v-model="item.text">
       </div>
+      <app-button type="add" class="note-list__add" @click="addListItem"/>
     </template>
 
     <div v-if="form.updated" class="note__updated text--small">
@@ -35,8 +31,10 @@
 
     <div class="note__controls">
       <app-button v-if="!fullViewMode" type="drag" class="drag"/>
-      <color-input @change="colorChangeHandler"></color-input>
-      <image-input @change="imageChangeHandler"/>
+      <color-input @change="value => changeNote(value, 'color')"/>
+      <image-input @change="value => changeNote(value, 'image')"/>
+      <app-button v-if="isList" type="text" @click="transformToText"/>
+      <app-button v-if="!isList" type="list" @click="transformToList"/>
       <app-button type="delete" @click="deleteNote(form.id)"/>
       <app-button v-if="fullViewMode" type="save" @click="closeForm"/>
       <app-button v-if="!fullViewMode" type="edit" @click="openForm(form)"/>
@@ -48,12 +46,14 @@
     import AppButton from './AppButton'
     import ColorInput from './ColorInput'
     import ImageInput from './ImageInput'
+    import AppTextarea from './AppTextarea'
     import {mapMutations} from 'vuex'
 
     export default {
         name: 'NoteItem',
         components: {
             AppButton,
+            AppTextarea,
             ColorInput,
             ImageInput
         },
@@ -85,10 +85,18 @@
         computed: {
             form() {
                 return this.note || this.emptyNote;
+            },
+            isList() {
+                return this.form.type === 'list';
             }
         },
-        mounted() {
-            this.fitTextareaHeight();
+        watch: {
+            'form.listItems': {
+                handler(items) {
+                    this.changeNote(items, 'listItems');
+                },
+                deep: true
+            }
         },
         beforeDestroy() {
             const note = this.form;
@@ -104,33 +112,39 @@
                 'closeForm',
                 'deleteNote'
             ]),
-            textChangeHandler(event, prop) {
-                if (prop === 'text') this.fitTextareaHeight();
-                this.updateProperty(prop, event.target.value);
+
+            transformToText() {
+                this.form.text = this.form.listItems.reduce((allText, {text}) => {
+                    return allText + `${text}\n`
+                }, '');
+
+                this.changeNote('text', 'type');
             },
-            colorChangeHandler(colorName) {
-                this.updateProperty('color', colorName);
+
+            transformToList() {
+                const textItems = this.form.text.split(/\n/).filter(t => t);
+                const listItems = [];
+
+                textItems.forEach(text => listItems.push({checked: false, text}));
+
+                this.form.listItems = listItems;
+                this.changeNote('list', 'type');
             },
-            imageChangeHandler(image) {
-                this.updateProperty('image', image);
+
+            addListItem() {
+              this.form.listItems.push({
+                  checked: false,
+                  text: ''
+              })
             },
-            updateProperty(prop, value) {
+
+            changeNote(value, prop) {
+                if (prop === 'title' || prop === 'text') this.$emit('calculateLayout');
+
                 if (this.form.id) this.updateNoteProperty({noteId: this.form.id, prop, value});
                 else this.form[prop] = value;
             },
-            focusTextarea() {
-                const textarea = this.$refs.textarea;
 
-                if (textarea) textarea.focus();
-            },
-            fitTextareaHeight() {
-                const textarea = this.$refs.textarea;
-
-                if (textarea && textarea.scrollHeight > textarea.offsetHeight) {
-                    this.$emit('calculateLayout');
-                    textarea.style.height = `${textarea.scrollHeight}px`;
-                }
-            },
             getFormattedTime(iso) {
                 const date = new Date(iso);
                 const hours = date.getHours();
@@ -143,6 +157,7 @@
         }
     }
 </script>
+
 
 <style lang="scss" scoped>
   @import '../style/variables';
@@ -165,36 +180,12 @@
       align-items: center;
       max-height: 120px;
       margin-bottom: 12px;
+
       img {
         max-width: inherit;
         max-height: inherit;
         border-radius: 8px;
       }
-    }
-
-    &__title,
-    &__text {
-      font-size: 18px;
-      line-height: 24px;
-      margin-bottom: 8px;
-      background-color: transparent;
-
-      &, &:focus {
-        outline: none;
-        border: none;
-      }
-    }
-
-    &__text {
-      display: block;
-      width: 100%;
-      resize: none;
-    }
-
-    &__text {
-      font-size: 14px;
-      line-height: 18px;
-      cursor: default;
     }
 
     &__updated {
@@ -210,6 +201,37 @@
       & > * {
         margin-right: 12px;
       }
+    }
+  }
+
+  .note-list {
+    display: flex;
+    &__text {
+      margin-bottom: 8px;
+      background-color: transparent;
+      width: 100%;
+      resize: none;
+      cursor: default;
+
+      &, &:focus {
+        outline: none;
+        border: none;
+      }
+
+      &.checked {
+        text-decoration: line-through;
+      }
+    }
+
+    &__checkbox {
+      margin: 4px 8px 4px 4px;
+      transform: scale(1.4);
+      cursor: pointer;
+      opacity: .7;
+    }
+
+    &__add {
+      margin: 8px auto auto -2px;
     }
   }
 

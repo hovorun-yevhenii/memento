@@ -54,6 +54,7 @@ export const mutations = {
     const noteIndex = state.notes.findIndex(e => e.id === noteId);
 
     state.notes.splice(noteIndex, 1);
+    state.isModalFormOpen = false;
   },
 
   swapNotes(state, {from, to}) {
