@@ -1,5 +1,5 @@
 <template>
-  <app-button type="color" @mouseenter.native="togglePicker(true)" @mouseleave.native="togglePicker()">
+  <app-icon class="wrapper" type="color" @mouseenter.native="togglePicker(true)" @mouseleave.native="togglePicker()">
     <transition name="picker">
       <div v-if="showColorPicker" class="picker">
         <div class="color"
@@ -9,17 +9,17 @@
         </div>
       </div>
     </transition>
-  </app-button>
+  </app-icon>
 </template>
 
 <script>
-    import AppButton from './AppButton'
+    import AppIcon from './AppIcon'
     import colors from '../colorConfig'
 
     export default {
         name: "ColorPicker",
         components: {
-            AppButton
+            AppIcon
         },
         data() {
             return {
@@ -38,8 +38,13 @@
 <style lang="scss" scoped>
   @import "../style/variables";
 
+  .wrapper {
+    position: relative;
+  }
+
   .picker {
     position: absolute;
+    top: 100%;
     width: 128px;
     padding: 4px;
     display: flex;
@@ -49,9 +54,7 @@
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     cursor: default;
     transition: .2s;
-    transform: translateY(calc(-100% - 24px));
-    transform-origin: 0 100%;
-    z-index: 2;
+    z-index: 1;
 
     .color {
       width: 22px;

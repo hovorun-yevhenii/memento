@@ -6,7 +6,7 @@
 </template>
 
 <script>
-    import AppButton from './AppButton'
+    import AppButton from './AppIcon'
 
     export default {
         name: "ImageInput",

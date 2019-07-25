@@ -20,7 +20,6 @@
     import Packery from 'packery'
     import Draggabilly from 'draggabilly'
     import {mapGetters, mapMutations} from 'vuex'
-    import colors from '../colorConfig'
 
     export default {
         name: 'NotesList',
@@ -51,11 +50,7 @@
             this.getNotesFromLS();
             this.updateLayout();
         },
-        mounted() {
-            Object.entries(colors).forEach(([name, hex]) => {
-                this.$el.style.setProperty(`--${name}`, hex)
-            });
-        },
+
         methods: {
             ...mapMutations([
                 'getNotesFromLS',
@@ -98,6 +93,7 @@
 
   .notes {
     max-width: 1000px;
+    min-height: calc(100vh - 150px);
     margin: 0 auto;
     padding: 16px;
   }

@@ -7,7 +7,8 @@ export const state = {
 export const getters = {
   getAllNotes: state => state.notes,
   getNoteToUpdate: state => state.noteToUpdate,
-  modalFormIsOpen: state => state.isModalFormOpen
+  modalFormIsOpen: state => state.isModalFormOpen,
+  checkedNotes: state => state.notes.some(note => note.checked)
 };
 
 export const mutations = {
@@ -62,5 +63,20 @@ export const mutations = {
 
     state.notes[from] = state.notes[to];
     state.notes.splice(to, 1, tempNote);
+  },
+
+  changeNotesColor(state, color) {
+    state.notes.forEach(note => {
+      if (note.checked) note.color = color;
+    })
+  },
+
+  deleteSelectedNotes(state) {
+    const checked = state.notes.filter(note => note.checked);
+    checked.forEach(({id}) => this.commit('deleteNote', id));
+  },
+
+  uncheckNotes(state) {
+    state.notes.forEach(note => Object.assign(note, {checked: false}));
   }
 };

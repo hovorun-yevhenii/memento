@@ -1,5 +1,15 @@
 <template>
-  <div class="note" :class="{'full-view': fullViewMode}" :style="'background-color: var(--' + form.color +')'">
+  <div class="note"
+       @mouseover="hover = true"
+       @mouseleave="hover = false"
+       :class="{'full-view': fullViewMode, 'checked': form.checked}"
+       :style="'background-color: var(--' + form.color +')'">
+
+    <label v-if="!fullViewMode && (hover || form.checked)" class="check-controls">
+      <input type="checkbox" v-model="form.checked">
+      <app-icon v-if="!form.checked" type="checkable"/>
+      <app-icon v-if="form.checked" type="checked"/>
+    </label>
 
     <div v-if="form.image" class="note__image">
       <div class="note__image-close"></div>
@@ -20,9 +30,10 @@
     <template v-if="isList">
       <div class="note-list text" v-for="item in form.listItems">
         <input type="checkbox" class="note-list__checkbox" v-model="item.checked">
-        <input type="text" class="note-list__text" :class="{'checked': item.checked}" placeholder="Введите текст" v-model="item.text">
+        <input type="text" class="note-list__text" :class="{'checked': item.checked}" placeholder="Введите текст"
+               v-model="item.text">
       </div>
-      <app-button type="add" class="note-list__add" @click="addListItem"/>
+      <app-icon type="add" class="note-list__add" @click="addListItem"/>
     </template>
 
     <div v-if="form.updated" class="note__updated text--small">
@@ -30,20 +41,20 @@
     </div>
 
     <div class="note__controls">
-      <app-button v-if="!fullViewMode" type="drag" class="drag"/>
+      <app-icon v-if="!fullViewMode" type="drag" class="drag"/>
       <color-input @change="value => changeNote(value, 'color')"/>
       <image-input @change="value => changeNote(value, 'image')"/>
-      <app-button v-if="isList" type="text" @click="transformToText"/>
-      <app-button v-if="!isList" type="list" @click="transformToList"/>
-      <app-button type="delete" @click="deleteNote(form.id)"/>
-      <app-button v-if="fullViewMode" type="save" @click="closeForm"/>
-      <app-button v-if="!fullViewMode" type="edit" @click="openForm(form)"/>
+      <app-icon v-if="isList" type="text" @click="transformToText"/>
+      <app-icon v-if="!isList" type="list" @click="transformToList"/>
+      <app-icon type="delete" @click="deleteNote(form.id)"/>
+      <app-icon v-if="fullViewMode" type="save" @click="closeForm"/>
+      <app-icon v-if="!fullViewMode" type="edit" @click="openForm(form)"/>
     </div>
   </div>
 </template>
 
 <script>
-    import AppButton from './AppButton'
+    import AppIcon from './AppIcon'
     import ColorInput from './ColorInput'
     import ImageInput from './ImageInput'
     import AppTextarea from './AppTextarea'
@@ -52,7 +63,7 @@
     export default {
         name: 'NoteItem',
         components: {
-            AppButton,
+            AppIcon,
             AppTextarea,
             ColorInput,
             ImageInput
@@ -69,6 +80,7 @@
         },
         data() {
             return {
+                hover: false,
                 emptyNote: {
                     id: '',
                     type: 'text',
@@ -78,7 +90,8 @@
                     color: 'default',
                     image: '',
                     isPinned: '',
-                    updated: ''
+                    updated: '',
+                    checked: false
                 }
             }
         },
@@ -132,17 +145,18 @@
             },
 
             addListItem() {
-              this.form.listItems.push({
-                  checked: false,
-                  text: ''
-              })
+                this.$emit('calculateLayout');
+                this.form.listItems.push({
+                    checked: false,
+                    text: ''
+                })
             },
 
             changeNote(value, prop) {
-                if (prop === 'title' || prop === 'text') this.$emit('calculateLayout');
-
                 if (this.form.id) this.updateNoteProperty({noteId: this.form.id, prop, value});
                 else this.form[prop] = value;
+
+                if (['title', 'text', 'image'].includes(prop)) this.$emit('calculateLayout');
             },
 
             getFormattedTime(iso) {
@@ -172,6 +186,19 @@
 
     &.full-view {
       width: 100%;
+    }
+
+    &.checked {
+      box-shadow: 0 1px 4px $main-text;
+    }
+
+    .check-controls {
+      position: absolute;
+      top: -12px;
+      left: -12px;
+      input {
+        display: none;
+      }
     }
 
     &__image {
@@ -206,6 +233,7 @@
 
   .note-list {
     display: flex;
+
     &__text {
       margin-bottom: 8px;
       background-color: transparent;
@@ -234,5 +262,4 @@
       margin: 8px auto auto -2px;
     }
   }
-
 </style>
