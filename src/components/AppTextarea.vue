@@ -1,6 +1,5 @@
 <template>
-  <textarea class="textarea"
-            ref="textarea"
+  <textarea ref="textarea"
             :value="value"
             @input="changeHandler"
             :placeholder="placeholder">
@@ -42,7 +41,7 @@
 <style lang="scss" scoped>
   @import "../style/variables";
 
-  .textarea {
+  textarea {
     display: block;
     width: 100%;
     margin-bottom: 8px;

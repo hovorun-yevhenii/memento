@@ -1,7 +1,12 @@
 <template>
-    <app-icon class="wrapper" type="color" :big="big" @mouseenter.native="togglePicker(true)" @mouseleave.native="togglePicker()">
+    <app-icon class="wrapper"
+              type="color"
+              :big="big"
+              @mouseenter.native="togglePicker(true)"
+              @mouseleave.native="togglePicker()">
         <transition name="picker">
-            <div v-if="showColorPicker" class="picker">
+            <div v-if="showColorPicker"
+                 class="picker">
                 <div class="color"
                      v-for="(hex, name) in colors"
                      :style="'background-color: var(--' + name + ')'"

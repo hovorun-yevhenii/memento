@@ -1,13 +1,19 @@
 <template>
     <div class="header">
-        <app-icon big type="add" @click="openForm" class="header__add"/>
+        <app-icon type="add"
+                  big
+                  @click="openForm"
+                  class="header__add"/>
 
         <search-input/>
 
         <div class="header__controls">
-            <template v-if="thereIsCheckedNotes">
-                <color-input big @change="changeNotesColor"/>
-                <app-icon big type="delete" @click="deleteSelectedNotes"/>
+            <template v-if="thereAreCheckedNotes">
+                <color-input big
+                             @change="changeNotesColor"/>
+                <app-icon type="delete"
+                          big
+                          @click="deleteSelectedNotes"/>
             </template>
         </div>
     </div>
@@ -28,7 +34,7 @@
         },
         computed: {
             ...mapGetters([
-                'thereIsCheckedNotes'
+                'thereAreCheckedNotes'
             ])
         },
         methods: {
@@ -46,14 +52,14 @@
 
     .header {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-
         border-bottom: 1px solid $border-color;
-        padding: 32px;
+        padding: 16px;
 
         &__add {
-            min-width: 48px;
+            width: 48px;
         }
 
         &__controls {

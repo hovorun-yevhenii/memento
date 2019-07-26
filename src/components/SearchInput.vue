@@ -42,17 +42,18 @@
 
     .search {
         position: relative;
-        margin: 0 32px;
-        width: 288px;
+        margin: 16px 32px;
+        width: 236px;
 
         &__input {
-            width: 236px;
+            width: 100%;
             padding: 8px;
             margin-right: 8px;
             border: 1px solid $default-bg;
             border-radius: 4px;
             background-color: transparent;
             transition: .2s;
+            box-sizing: border-box;
 
             &:focus {
                 outline: none;
@@ -62,7 +63,7 @@
 
         &__clear {
             position: absolute;
-            right: 4px;
+            right: 8px;
             top: 0;
             bottom: 0;
             margin: auto;

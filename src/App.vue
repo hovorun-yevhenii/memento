@@ -23,10 +23,10 @@
         },
         methods: {
             uncheckNotes({target}) {
-                const thereIsChecked = this.$store.getters.thereIsCheckedNotes;
-                const targetClick = ['notes', 'list'].includes(target.className);
+                const thereAreChecked = this.$store.getters.thereAreCheckedNotes;
+                const targetClick = ['notes', 'layout'].includes(target.className);
 
-                if (thereIsChecked && targetClick) this.$store.commit('uncheckNotes');
+                if (thereAreChecked && targetClick) this.$store.commit('uncheckNotes');
             }
         }
     }

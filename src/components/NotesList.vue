@@ -1,15 +1,24 @@
 <template>
     <div class="notes">
-        <div class="list" ref="notes">
-            <note-item v-for="(note, index) in notes"
-                       :key="note.id"
-                       :note="note"
-                       :data-packery-id="index"
-                       @calculateLayout="calculateLayout"/>
-        </div>
+        <template v-if="showPinnedNotes">
+            <div v-if="showUnPinnedNotes" class="heading">Pinned notes</div>
+            <masonry-layout :notes="pinnedNotes"/>
+        </template>
+
+        <template v-if="showUnPinnedNotes">
+            <div v-if="showPinnedNotes" class="heading">Unpinned notes</div>
+            <masonry-layout :notes="unpinnedNotes"/>
+        </template>
+
+        <template v-if="searchText">
+            <div v-if="matchedNotes.length" class="heading">Matched notes</div>
+            <div v-if="!matchedNotes.length" class="heading">No matches</div>
+            <masonry-layout :notes="matchedNotes"/>
+        </template>
 
         <modal-form>
-            <note-item :fullViewMode="true" :note="noteToUpdate"></note-item>
+            <note-item :fullViewMode="true"
+                       :note="noteToUpdate"/>
         </modal-form>
     </div>
 </template>
@@ -17,20 +26,15 @@
 <script>
     import NoteItem from './NoteItem'
     import ModalForm from './ModalForm'
-    import Packery from 'packery'
-    import Draggabilly from 'draggabilly'
-    import {mapGetters, mapMutations} from 'vuex'
+    import MasonryLayout from './MasonryLayout'
+    import {mapGetters} from 'vuex'
 
     export default {
         name: 'NotesList',
         components: {
+            MasonryLayout,
             NoteItem,
             ModalForm
-        },
-        data() {
-            return {
-                packery: null
-            }
         },
         computed: {
             ...mapGetters({
@@ -38,61 +42,33 @@
                 noteToUpdate: 'getNoteToUpdate',
                 searchText: 'getSearchText'
             }),
-            notes() {
-              const match = this.searchText;
-
-              if (!match) return this.allNotes;
-              else return this.allNotes.filter(note => {
-                return note.title.includes(match) || note.text.includes(match);
+            pinnedNotes() {
+                return this.allNotes.filter(note => note.pinned);
+            },
+            unpinnedNotes() {
+                return this.allNotes.filter(note => !note.pinned);
+            },
+            matchedNotes() {
+              return this.allNotes.filter(note => {
+                return note.title.includes(this.searchText) || note.text.includes(this.searchText);
               })
+            },
+            showPinnedNotes() {
+                return this.pinnedNotes.length && !this.searchText;
+            },
+            onlyPinnedNotes() {
+                return this.pinnedNotes.length && !this.unpinnedNotes.length;
+            },
+            showUnPinnedNotes() {
+                return this.unpinnedNotes.length && !this.searchText;
+            },
+            onlyUnPinnedNotes() {
+                return this.unpinnedNotes.length && !this.pinnedNotes.length;
             }
         },
-        watch: {
-            notes(list) {
-                const mountedNotes = this.$refs.notes.children.length;
-                const actualNotes = list.length;
 
-                if (mountedNotes !== actualNotes) this.$nextTick(() => this.updateLayout());
-            }
-        },
         created() {
-            this.getNotesFromLS();
-            this.updateLayout();
-        },
-
-        methods: {
-            ...mapMutations([
-                'getNotesFromLS',
-                'swapNotes'
-            ]),
-            updateLayout() {
-                this.$nextTick(() => {
-                    if (this.packery) this.packery.destroy();
-
-                    this.packery = new Packery(this.$refs.notes, {
-                        itemSelector: '.note',
-                        columnWidth: 288,
-                        gutter: 16,
-                        transitionDuration: '0.25s'
-                    });
-
-                    this.packery.getItemElements().forEach(note => {
-                        this.packery.bindDraggabillyEvents(new Draggabilly(note, {handle: '.drag'}));
-                    });
-
-                    this.packery.on('dragItemPositioned', note => this.onDragEnd(note));
-                });
-            },
-            onDragEnd(note) {
-                const from = note.element.dataset.packeryId;
-                const to = this.packery.items.indexOf(note);
-
-                this.swapNotes({from, to});
-                this.$nextTick(() => this.packery.layout());
-            },
-            calculateLayout() {
-                if (this.packery) this.packery.layout();
-            }
+            this.$store.commit('getNotesFromLS');
         }
     }
 </script>
@@ -105,5 +81,9 @@
         min-height: calc(100vh - 150px);
         margin: 0 auto;
         padding: 16px;
+
+        .heading {
+            margin-bottom: 16px;
+        }
     }
 </style>
