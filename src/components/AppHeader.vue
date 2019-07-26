@@ -1,58 +1,67 @@
 <template>
-  <div class="header">
-    <app-icon big type="add" @click="openForm"/>
+    <div class="header">
+        <app-icon big type="add" @click="openForm" class="header__add"/>
 
-    <div class="header__search">
-      <input type="text">
-    </div>
+        <search-input/>
 
-    <div v-if="checkedNotes" class="header__controls">
-      <color-input @change="changeNotesColor"/>
-      <app-icon type="delete" @click="deleteSelectedNotes"/>
+        <div class="header__controls">
+            <template v-if="thereIsCheckedNotes">
+                <color-input big @change="changeNotesColor"/>
+                <app-icon big type="delete" @click="deleteSelectedNotes"/>
+            </template>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
     import AppIcon from './AppIcon'
     import ColorInput from './ColorInput'
+    import SearchInput from './SearchInput'
+    import {mapGetters, mapMutations} from 'vuex'
 
     export default {
         name: "AppHeader",
         components: {
             AppIcon,
-            ColorInput
+            ColorInput,
+            SearchInput
         },
         computed: {
-            checkedNotes() {
-                return this.$store.getters.checkedNotes
-            }
+            ...mapGetters([
+                'thereIsCheckedNotes'
+            ])
         },
         methods: {
-            openForm() {
-                this.$store.commit('openForm')
-            },
-            changeNotesColor(color) {
-                this.$store.commit('changeNotesColor', color)
-            },
-            deleteSelectedNotes() {
-                this.$store.commit('deleteSelectedNotes')
-            }
+            ...mapMutations([
+                'openForm',
+                'changeNotesColor',
+                'deleteSelectedNotes'
+            ])
         }
     }
 </script>
 
 <style lang="scss" scoped>
-  @import '../style/variables';
+    @import '../style/variables';
 
-  .header {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid $border-color;
-    padding: 32px;
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-    &__controls {
-      display: flex;
+        border-bottom: 1px solid $border-color;
+        padding: 32px;
+
+        &__add {
+            min-width: 48px;
+        }
+
+        &__controls {
+            display: flex;
+            justify-content: space-between;
+            width: 120px;
+            padding: 0 8px;
+            z-index: 1;
+        }
     }
-  }
 </style>

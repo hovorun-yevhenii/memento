@@ -1,14 +1,16 @@
 export const state = {
   notes: [],
   noteToUpdate: null,
-  isModalFormOpen: false
+  isModalFormOpen: false,
+  searchText: ''
 };
 
 export const getters = {
   getAllNotes: state => state.notes,
   getNoteToUpdate: state => state.noteToUpdate,
   modalFormIsOpen: state => state.isModalFormOpen,
-  checkedNotes: state => state.notes.some(note => note.checked)
+  thereIsCheckedNotes: state => state.notes.some(note => note.checked),
+  getSearchText: state => state.searchText
 };
 
 export const mutations = {
@@ -78,5 +80,9 @@ export const mutations = {
 
   uncheckNotes(state) {
     state.notes.forEach(note => Object.assign(note, {checked: false}));
+  },
+
+  setSearchText(state, text) {
+    state.searchText = text;
   }
 };

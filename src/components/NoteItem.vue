@@ -177,7 +177,7 @@
   @import '../style/variables';
 
   .note {
-    width: 238px;
+    width: 288px;
     padding: 12px;
     border-radius: 8px;
     background-color: #2D2E30;

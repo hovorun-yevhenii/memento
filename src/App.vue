@@ -1,8 +1,8 @@
 <template>
-  <div id="app">
-    <app-header></app-header>
-    <notes-list @click.native="uncheckNotes"></notes-list>
-  </div>
+    <div id="app">
+        <app-header/>
+        <notes-list @click.native="uncheckNotes"/>
+    </div>
 </template>
 
 <script>
@@ -23,24 +23,26 @@
         },
         methods: {
             uncheckNotes({target}) {
-                if (!this.$store.getters.checkedNotes) return;
-                if (target.className === 'notes') this.$store.commit('uncheckNotes');
+                const thereIsChecked = this.$store.getters.thereIsCheckedNotes;
+                const targetClick = ['notes', 'list'].includes(target.className);
+
+                if (thereIsChecked && targetClick) this.$store.commit('uncheckNotes');
             }
         }
     }
 </script>
 
 <style lang="scss">
-  @import 'style/global';
+    @import 'style/global';
 
-  [id='app'] {
-    min-height: 100vh;
-    background-color: $main-dark;
-    color: $main-text;
+    [id='app'] {
+        min-height: 100vh;
+        background-color: $main-dark;
+        color: $main-text;
 
-    &, & * {
-      font-family: $roboto;
-      color: $main-text;
+        &, & * {
+            font-family: $roboto;
+            color: $main-text;
+        }
     }
-  }
 </style>

@@ -1,17 +1,17 @@
 <template>
-  <div class="notes">
-    <div class="list" ref="notes">
-      <note-item v-for="(note, index) in notes"
-                 :key="note.id"
-                 :note="note"
-                 :data-packery-id="index"
-                 @calculateLayout="calculateLayout"/>
-    </div>
+    <div class="notes">
+        <div class="list" ref="notes">
+            <note-item v-for="(note, index) in notes"
+                       :key="note.id"
+                       :note="note"
+                       :data-packery-id="index"
+                       @calculateLayout="calculateLayout"/>
+        </div>
 
-    <modal-form>
-      <note-item :fullViewMode="true" :note="noteToUpdate"></note-item>
-    </modal-form>
-  </div>
+        <modal-form>
+            <note-item :fullViewMode="true" :note="noteToUpdate"></note-item>
+        </modal-form>
+    </div>
 </template>
 
 <script>
@@ -34,9 +34,18 @@
         },
         computed: {
             ...mapGetters({
-                notes: 'getAllNotes',
-                noteToUpdate: 'getNoteToUpdate'
-            })
+                allNotes: 'getAllNotes',
+                noteToUpdate: 'getNoteToUpdate',
+                searchText: 'getSearchText'
+            }),
+            notes() {
+              const match = this.searchText;
+
+              if (!match) return this.allNotes;
+              else return this.allNotes.filter(note => {
+                return note.title.includes(match) || note.text.includes(match);
+              })
+            }
         },
         watch: {
             notes(list) {
@@ -62,7 +71,7 @@
 
                     this.packery = new Packery(this.$refs.notes, {
                         itemSelector: '.note',
-                        columnWidth: 238,
+                        columnWidth: 288,
                         gutter: 16,
                         transitionDuration: '0.25s'
                     });
@@ -89,12 +98,12 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '../style/variables';
+    @import '../style/variables';
 
-  .notes {
-    max-width: 1000px;
-    min-height: calc(100vh - 150px);
-    margin: 0 auto;
-    padding: 16px;
-  }
+    .notes {
+        max-width: 1000px;
+        min-height: calc(100vh - 150px);
+        margin: 0 auto;
+        padding: 16px;
+    }
 </style>
