@@ -1,5 +1,5 @@
 <template>
-  <div class="icon" :class="{'big': big, 'drag': type === 'drag'}" @click="$emit('click')">
+  <div class="icon" :class="{'big': big, 'drag': type === 'drag', 'disabled': disabled}" @click="$emit('click')">
     <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 24 24">
       <path v-if="type === 'add'" d="M13 11h-2v3H8v2h3v3h2v-3h3v-2h-3zm1-9H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"></path>
       <path v-if="type === 'edit'" xmlns="http://www.w3.org/2000/svg" d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"></path>
@@ -30,6 +30,10 @@
             type: {
                 type: String,
                 required: true
+            },
+            disabled: {
+                type: Boolean,
+                default: false
             }
         },
         name: "AppIcon"
@@ -54,6 +58,13 @@
 
     &.drag {
       cursor: move;
+    }
+
+    &.disabled {
+      pointer-events: none;
+      svg {
+        fill: $main-dark;
+      }
     }
 
     &:hover {

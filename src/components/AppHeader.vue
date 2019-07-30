@@ -5,9 +5,9 @@
                   @click="openForm"
                   class="header__add"/>
 
-        <search-input/>
+        <search-input v-if="getAllNotes.length"/>
 
-        <div class="header__controls">
+        <div v-if="getAllNotes.length" class="header__controls">
             <template v-if="thereAreCheckedNotes">
                 <color-input big
                              @change="changeNotesColor"/>
@@ -34,7 +34,8 @@
         },
         computed: {
             ...mapGetters([
-                'thereAreCheckedNotes'
+                'thereAreCheckedNotes',
+                'getAllNotes'
             ])
         },
         methods: {

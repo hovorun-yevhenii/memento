@@ -1,7 +1,8 @@
 <template>
   <textarea ref="textarea"
             :value="value"
-            @input="changeHandler"
+            @input="onInput"
+            spellcheck="false"
             :placeholder="placeholder">
   </textarea>
 </template>
@@ -28,9 +29,10 @@
             fitHeight() {
                 const area = this.$refs.textarea;
 
-                if (area.scrollHeight > area.offsetHeight) area.style.height = `${area.scrollHeight}px`;
+                area.style.height = 'auto';
+                area.style.height = `${area.scrollHeight}px`;
             },
-            changeHandler(event) {
+            onInput(event) {
                 this.fitHeight();
                 this.$emit('change', event.target.value);
             }

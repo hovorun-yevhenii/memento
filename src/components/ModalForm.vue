@@ -65,7 +65,7 @@
 
     .modal-enter,
     .modal-leave-to {
-        transform: scale(.5);
+        transform: scale(1.2);
         opacity: 0;
     }
 </style>
