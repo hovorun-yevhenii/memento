@@ -2,6 +2,7 @@
     <div class="search">
         <input v-model="searchText"
                placeholder="search by note content"
+               spellcheck="false"
                class="search__input text">
 
         <app-icon v-if="searchText"

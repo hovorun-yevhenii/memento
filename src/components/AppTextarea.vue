@@ -1,8 +1,8 @@
 <template>
   <textarea ref="textarea"
-            :value="value"
             @input="onInput"
             spellcheck="false"
+            :value="value"
             :placeholder="placeholder">
   </textarea>
 </template>
@@ -19,7 +19,7 @@
             },
             placeholder: {
                 type: String,
-                default: 'Введите текст'
+                default: 'Type text here'
             }
         },
         mounted() {
@@ -41,19 +41,19 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "../style/variables";
+    @import "../style/variables";
 
-  textarea {
-    display: block;
-    width: 100%;
-    margin-bottom: 8px;
-    background-color: transparent;
-    resize: none;
-    cursor: default;
+    textarea {
+        display: block;
+        width: 100%;
+        margin-bottom: 8px;
+        background-color: transparent;
+        resize: none;
+        cursor: default;
 
-    &, &:focus {
-      outline: none;
-      border: none;
+        &, &:focus {
+            outline: none;
+            border: none;
+        }
     }
-  }
 </style>

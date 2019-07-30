@@ -1,6 +1,7 @@
 <template>
     <label>
         <app-button type="image"/>
+
         <input type="file"
                accept="image/*"
                @change="readImage">

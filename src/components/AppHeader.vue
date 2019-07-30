@@ -7,7 +7,8 @@
 
         <search-input v-if="getAllNotes.length"/>
 
-        <div v-if="getAllNotes.length" class="header__controls">
+        <div v-if="getAllNotes.length"
+             class="header__controls">
             <template v-if="thereAreCheckedNotes">
                 <color-input big
                              @change="changeNotesColor"/>
@@ -56,8 +57,8 @@
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-        border-bottom: 1px solid $border-color;
         padding: 16px;
+        border-bottom: 1px solid $border-color;
 
         &__add {
             width: 48px;

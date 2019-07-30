@@ -19,10 +19,10 @@
             NoteItem
         },
         props: {
-          notes: {
-              type: Array,
-              default: []
-          }
+            notes: {
+                type: Array,
+                default: []
+            }
         },
         data() {
             return {
@@ -34,7 +34,7 @@
                 const mountedNotes = this.$refs.notes.children.length;
                 const actualNotes = list.length;
 
-                if (mountedNotes !== actualNotes) this.$nextTick(() => this.updateLayout());
+                if (mountedNotes !== actualNotes) this.updateLayout();
             }
         },
         created() {

@@ -38,11 +38,15 @@
     [id='app'] {
         min-height: 100vh;
         background-color: $main-dark;
+        background-image: url(https://www.transparenttextures.com/patterns/black-linen.png);
         color: $main-text;
 
         &, & * {
             font-family: $roboto;
             color: $main-text;
+            &::selection {
+                background-color: rgba(255,214,0,.35);
+            }
         }
     }
 </style>
