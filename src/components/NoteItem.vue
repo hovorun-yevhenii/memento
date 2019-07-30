@@ -204,19 +204,19 @@
 
             transformToText() {
                 this.form.text = this.form.listItems.reduce((allText, {text}) => {
-                    return allText + `${text}\n`;
+                    return text ? allText + `${text}\n` : allText;
                 }, '');
 
                 this.changeNote('text', 'type');
             },
 
             transformToList() {
-                const textItems = this.form.text.split(/\n/).filter(t => t);
-                const listItems = [];
+                const textItems = this.form.text.split(/\n/).filter(text => text);
 
-                textItems.forEach(text => listItems.push({checked: false, text}));
+                this.form.listItems = textItems.map(text => ({checked: false, text}));
 
-                this.form.listItems = listItems;
+                if (!this.form.listItems.length) this.addListItem();
+
                 this.changeNote('list', 'type');
             },
 
