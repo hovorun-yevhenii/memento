@@ -52,7 +52,8 @@
                       @change="value => changeNote(value, 'text')"/>
 
         <template v-if="isList">
-            <div v-for="item in form.listItems"
+            <div v-for="(item, index) in form.listItems"
+                 :key="index"
                  class="note-list text">
                 <input v-model="item.checked"
                        type="checkbox"
@@ -111,141 +112,141 @@
 </template>
 
 <script>
-    import AppIcon from './AppIcon'
-    import ColorInput from './ColorInput'
-    import ImageInput from './ImageInput'
-    import AppTextarea from './AppTextarea'
-    import {mapMutations} from 'vuex'
+import { mapMutations } from 'vuex';
+import AppIcon from './AppIcon.vue';
+import ColorInput from './ColorInput.vue';
+import ImageInput from './ImageInput.vue';
+import AppTextarea from './AppTextarea.vue';
 
-    export default {
-        name: 'NoteItem',
-        components: {
-            AppIcon,
-            AppTextarea,
-            ColorInput,
-            ImageInput
-        },
-        props: {
-            note: {
-                type: Object,
-                required: false
-            },
-            fullViewMode: {
-                type: Boolean,
-                required: false
-            }
-        },
-        data() {
-            return {
-                hover: false,
-                emptyNote: {
-                    id: '',
-                    type: 'text',
-                    title: '',
-                    text: '',
-                    listItems: [],
-                    color: 'default',
-                    image: '',
-                    updated: '',
-                    pinned: false,
-                    checked: false
-                }
-            }
-        },
-        computed: {
-            form() {
-                return this.note || this.emptyNote;
-            },
-            isList() {
-                return this.form.type === 'list';
-            },
-            showCheckControls() {
-                return !this.fullViewMode && (this.hover || this.form.checked);
-            },
-            showPinControls() {
-                return this.hover || this.form.pinned;
-            },
-            searchText() {
-                return this.$store.getters.getSearchText;
-            },
-            showAddListItemButton() {
-                const itemsQty = this.form.listItems.length;
+export default {
+  name: 'NoteItem',
+  components: {
+    AppIcon,
+    AppTextarea,
+    ColorInput,
+    ImageInput,
+  },
+  props: {
+    note: {
+      type: Object,
+      required: false,
+    },
+    fullViewMode: {
+      type: Boolean,
+      required: false,
+    },
+  },
+  data() {
+    return {
+      hover: false,
+      emptyNote: {
+        id: '',
+        type: 'text',
+        title: '',
+        text: '',
+        listItems: [],
+        color: 'default',
+        image: '',
+        updated: '',
+        pinned: false,
+        checked: false,
+      },
+    };
+  },
+  computed: {
+    form() {
+      return this.note || this.emptyNote;
+    },
+    isList() {
+      return this.form.type === 'list';
+    },
+    showCheckControls() {
+      return !this.fullViewMode && (this.hover || this.form.checked);
+    },
+    showPinControls() {
+      return this.hover || this.form.pinned;
+    },
+    searchText() {
+      return this.$store.getters.getSearchText;
+    },
+    showAddListItemButton() {
+      const itemsQty = this.form.listItems.length;
 
-                return itemsQty && this.form.listItems[itemsQty - 1].text;
-            },
-            withContent() {
-                const note = this.form;
+      return itemsQty && this.form.listItems[itemsQty - 1].text;
+    },
+    withContent() {
+      const note = this.form;
 
-                return note.title || note.text || note.image || note.listItems.length;
-            }
-        },
-        watch: {
-            'form.listItems': {
-                handler(items) {
-                    this.changeNote(items, 'listItems');
-                },
-                deep: true
-            },
-            hover() {
-                if (this.form.listItems.length) this.form.listItems = this.form.listItems.filter(item => item.text);
-            }
-        },
-        beforeDestroy() {
-            if (!this.form.id && this.withContent) this.createNote(this.form);
-        },
-        methods: {
-            ...mapMutations([
-                'updateNoteProperty',
-                'createNote',
-                'openForm',
-                'closeForm',
-                'deleteNote'
-            ]),
+      return note.title || note.text || note.image || note.listItems.length;
+    },
+  },
+  watch: {
+    'form.listItems': {
+      handler(items) {
+        this.changeNote(items, 'listItems');
+      },
+      deep: true,
+    },
+    hover() {
+      if (this.form.listItems.length) {
+        this.form.listItems = this.form.listItems.filter(item => item.text);
+      }
+    },
+  },
+  beforeDestroy() {
+    if (!this.form.id && this.withContent) this.createNote(this.form);
+  },
+  methods: {
+    ...mapMutations([
+      'updateNoteProperty',
+      'createNote',
+      'openForm',
+      'closeForm',
+      'deleteNote',
+    ]),
 
-            transformToText() {
-                this.form.text = this.form.listItems.reduce((allText, {text}) => {
-                    return text ? allText + `${text}\n` : allText;
-                }, '');
+    transformToText() {
+      this.form.text = this.form.listItems.reduce((allText, { text }) => (text ? `${allText}${text}\n` : allText), '');
 
-                this.changeNote('text', 'type');
-            },
+      this.changeNote('text', 'type');
+    },
 
-            transformToList() {
-                const textItems = this.form.text.split(/\n/).filter(text => text);
+    transformToList() {
+      const textItems = this.form.text.split(/\n/).filter(text => text);
 
-                this.form.listItems = textItems.map(text => ({checked: false, text}));
+      this.form.listItems = textItems.map(text => ({ checked: false, text }));
 
-                if (!this.form.listItems.length) this.addListItem();
+      if (!this.form.listItems.length) this.addListItem();
 
-                this.changeNote('list', 'type');
-            },
+      this.changeNote('list', 'type');
+    },
 
-            addListItem() {
-                this.$emit('calculateLayout');
-                this.form.listItems.push({
-                    checked: false,
-                    text: ''
-                });
-            },
+    addListItem() {
+      this.$emit('calculateLayout');
+      this.form.listItems.push({
+        checked: false,
+        text: '',
+      });
+    },
 
-            changeNote(value, prop) {
-                if (this.form.id) this.updateNoteProperty({noteId: this.form.id, prop, value});
-                else this.form[prop] = value;
+    changeNote(value, prop) {
+      if (this.form.id) this.updateNoteProperty({ noteId: this.form.id, prop, value });
+      else this.form[prop] = value;
 
-                if (['title', 'text', 'image', 'type'].includes(prop)) this.$emit('calculateLayout');
-            },
+      if (['title', 'text', 'image', 'type'].includes(prop)) this.$emit('calculateLayout');
+    },
 
-            getFormattedTime(iso) {
-                const date = new Date(iso);
-                const hours = date.getHours();
-                const minutes = date.getMinutes();
-                const day = date.getDate();
-                const month = date.toLocaleString('en-us', {month: 'long'});
+    getFormattedTime(iso) {
+      const date = new Date(iso);
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const day = date.getDate();
+      const month = date.toLocaleString('en-us', { month: 'long' });
 
-                return `${month} ${day} ${hours}:${minutes}`;
-            }
-        }
-    }
+      return `${month} ${day} ${hours}:${minutes}`;
+    },
+  },
+};
 </script>
 
 

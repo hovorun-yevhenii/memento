@@ -11,24 +11,19 @@
 </template>
 
 <script>
-    import NoteItem from './NoteItem'
-
-    export default {
-        name: 'ModalForm',
-        components: {
-            NoteItem
-        },
-        computed: {
-            isOpen() {
-                return this.$store.getters.modalFormIsOpen;
-            }
-        },
-        methods: {
-            closeForm() {
-                this.$store.commit('closeForm');
-            }
-        }
-    }
+export default {
+  name: 'ModalForm',
+  computed: {
+    isOpen() {
+      return this.$store.getters.modalFormIsOpen;
+    },
+  },
+  methods: {
+    closeForm() {
+      this.$store.commit('closeForm');
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

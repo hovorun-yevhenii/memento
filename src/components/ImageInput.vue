@@ -9,24 +9,24 @@
 </template>
 
 <script>
-    import AppButton from './AppIcon'
+import AppButton from './AppIcon.vue';
 
-    export default {
-        name: "ImageInput",
-        components: {
-            AppButton
-        },
-        methods: {
-            readImage({target: input}) {
-                if (input.files && input.files[0]) {
-                    const reader = new FileReader();
+export default {
+  name: 'ImageInput',
+  components: {
+    AppButton,
+  },
+  methods: {
+    readImage({ target: input }) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
 
-                    reader.onload = ({target}) => this.$emit('change', target.result);
-                    reader.readAsDataURL(input.files[0]);
-                }
-            }
-        }
-    }
+        reader.onload = ({ target }) => this.$emit('change', target.result);
+        reader.readAsDataURL(input.files[0]);
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>

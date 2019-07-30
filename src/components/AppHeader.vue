@@ -21,32 +21,32 @@
 </template>
 
 <script>
-    import AppIcon from './AppIcon'
-    import ColorInput from './ColorInput'
-    import SearchInput from './SearchInput'
-    import {mapGetters, mapMutations} from 'vuex'
+import { mapGetters, mapMutations } from 'vuex';
+import AppIcon from './AppIcon.vue';
+import ColorInput from './ColorInput.vue';
+import SearchInput from './SearchInput.vue';
 
-    export default {
-        name: "AppHeader",
-        components: {
-            AppIcon,
-            ColorInput,
-            SearchInput
-        },
-        computed: {
-            ...mapGetters([
-                'thereAreCheckedNotes',
-                'getAllNotes'
-            ])
-        },
-        methods: {
-            ...mapMutations([
-                'openForm',
-                'changeNotesColor',
-                'deleteSelectedNotes'
-            ])
-        }
-    }
+export default {
+  name: 'AppHeader',
+  components: {
+    AppIcon,
+    ColorInput,
+    SearchInput,
+  },
+  computed: {
+    ...mapGetters([
+      'thereAreCheckedNotes',
+      'getAllNotes',
+    ]),
+  },
+  methods: {
+    ...mapMutations([
+      'openForm',
+      'changeNotesColor',
+      'deleteSelectedNotes',
+    ]),
+  },
+};
 </script>
 
 <style lang="scss" scoped>

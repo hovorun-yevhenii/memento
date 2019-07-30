@@ -6,30 +6,30 @@
 </template>
 
 <script>
-    import AppHeader from './components/AppHeader'
-    import NotesList from './components/NotesList'
-    import colors from './colorConfig'
+import AppHeader from './components/AppHeader.vue';
+import NotesList from './components/NotesList.vue';
+import colors from './colorConfig';
 
-    export default {
-        name: 'app',
-        components: {
-            AppHeader,
-            NotesList
-        },
-        mounted() {
-            Object.entries(colors).forEach(([name, hex]) => {
-                this.$el.style.setProperty(`--${name}`, hex)
-            });
-        },
-        methods: {
-            uncheckNotes({target}) {
-                const thereAreChecked = this.$store.getters.thereAreCheckedNotes;
-                const targetClick = ['notes', 'layout'].includes(target.className);
+export default {
+  name: 'app',
+  components: {
+    AppHeader,
+    NotesList,
+  },
+  mounted() {
+    Object.entries(colors).forEach(([name, hex]) => {
+      this.$el.style.setProperty(`--${name}`, hex);
+    });
+  },
+  methods: {
+    uncheckNotes({ target }) {
+      const thereAreChecked = this.$store.getters.thereAreCheckedNotes;
+      const targetClick = ['notes', 'layout'].includes(target.className);
 
-                if (thereAreChecked && targetClick) this.$store.commit('uncheckNotes');
-            }
-        }
-    }
+      if (thereAreChecked && targetClick) this.$store.commit('uncheckNotes');
+    },
+  },
+};
 </script>
 
 <style lang="scss">

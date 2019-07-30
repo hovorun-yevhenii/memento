@@ -13,29 +13,29 @@
 </template>
 
 <script>
-    import AppIcon from './AppIcon'
+import AppIcon from './AppIcon.vue';
 
-    export default {
-        name: 'SearchInput',
-        components: {
-            AppIcon
-        },
-        data() {
-            return {
-                searchText: ''
-            }
-        },
-        watch: {
-            searchText(text) {
-                this.$store.commit('setSearchText', text);
-            }
-        },
-        methods: {
-            clearText() {
-                this.searchText = '';
-            }
-        }
-    }
+export default {
+  name: 'SearchInput',
+  components: {
+    AppIcon,
+  },
+  data() {
+    return {
+      searchText: '',
+    };
+  },
+  watch: {
+    searchText(text) {
+      this.$store.commit('setSearchText', text);
+    },
+  },
+  methods: {
+    clearText() {
+      this.searchText = '';
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

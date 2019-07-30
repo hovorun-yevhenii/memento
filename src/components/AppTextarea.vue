@@ -8,36 +8,36 @@
 </template>
 
 <script>
-    export default {
-        name: "AppTextarea",
-        props: {
-            value: {
-                placeholder: {
-                    type: String,
-                    default: ''
-                }
-            },
-            placeholder: {
-                type: String,
-                default: 'Type text here'
-            }
-        },
-        mounted() {
-            this.fitHeight();
-        },
-        methods: {
-            fitHeight() {
-                const area = this.$refs.textarea;
+export default {
+  name: 'AppTextarea',
+  props: {
+    value: {
+      placeholder: {
+        type: String,
+        default: '',
+      },
+    },
+    placeholder: {
+      type: String,
+      default: 'Type text here',
+    },
+  },
+  mounted() {
+    this.fitHeight();
+  },
+  methods: {
+    fitHeight() {
+      const area = this.$refs.textarea;
 
-                area.style.height = 'auto';
-                area.style.height = `${area.scrollHeight}px`;
-            },
-            onInput(event) {
-                this.fitHeight();
-                this.$emit('change', event.target.value);
-            }
-        }
-    }
+      area.style.height = 'auto';
+      area.style.height = `${area.scrollHeight}px`;
+    },
+    onInput(event) {
+      this.fitHeight();
+      this.$emit('change', event.target.value);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

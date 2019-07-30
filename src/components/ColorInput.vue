@@ -19,32 +19,32 @@
 </template>
 
 <script>
-    import AppIcon from './AppIcon'
-    import colors from '../colorConfig'
+import AppIcon from './AppIcon.vue';
+import colors from '../colorConfig';
 
-    export default {
-        name: "ColorPicker",
-        components: {
-            AppIcon
-        },
-        props: {
-            big: {
-                type: Boolean,
-                default: false
-            }
-        },
-        data() {
-            return {
-                showColorPicker: false,
-                colors
-            }
-        },
-        methods: {
-            togglePicker(show) {
-                this.showColorPicker = show;
-            }
-        }
-    }
+export default {
+  name: 'ColorPicker',
+  components: {
+    AppIcon,
+  },
+  props: {
+    big: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      showColorPicker: false,
+      colors,
+    };
+  },
+  methods: {
+    togglePicker(show) {
+      this.showColorPicker = show;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
