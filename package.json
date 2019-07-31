@@ -9,10 +9,11 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
-    "vue": "^2.6.10",
-    "vuex": "^3.0.1",
     "draggabilly": "^2.2.0",
     "packery": "^2.1.2",
+    "vue": "^2.6.10",
+    "vue-loader": "^15.7.1",
+    "vuex": "^3.0.1",
     "vuex-persist": "^2.0.1"
   },
   "devDependencies": {

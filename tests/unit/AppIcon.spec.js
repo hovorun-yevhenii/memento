@@ -3,10 +3,10 @@ import AppIcon from '@/components/AppIcon.vue';
 
 describe('AppIcon.vue', () => {
   it('renders a svg', () => {
-    const wrapper = mount(AppIcon,{
+    const wrapper = mount(AppIcon, {
       propsData: {
-        type: 'color'
-      }
+        type: 'color',
+      },
     });
 
     expect(wrapper.contains('svg')).toBe(true);
