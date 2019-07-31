@@ -78,7 +78,7 @@ export const mutations = {
     });
   },
 
-  deleteSelectedNotes(state) {
+  deleteCheckedNotes(state) {
     const checked = state.notes.filter(note => note.checked);
     checked.forEach(({ id }) => this.commit('deleteNote', id));
   },

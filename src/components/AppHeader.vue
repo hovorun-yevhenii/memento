@@ -14,7 +14,7 @@
                              @change="changeNotesColor"/>
                 <app-icon type="delete"
                           big
-                          @click="deleteSelectedNotes"/>
+                          @click="deleteCheckedNotes"/>
             </template>
         </div>
     </div>
@@ -43,7 +43,7 @@ export default {
     ...mapMutations([
       'openForm',
       'changeNotesColor',
-      'deleteSelectedNotes',
+      'deleteCheckedNotes',
     ]),
   },
 };
