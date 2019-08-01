@@ -24,7 +24,7 @@ describe('AppHeader', () => {
     });
 
     it('commits an openForm mutation', () => {
-        wrapper.find('.header__add').trigger('keydown');
+        wrapper.find('.header__add').trigger('click');
         expect(mutations.openForm).toHaveBeenCalled();
     });
 });
