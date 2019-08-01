@@ -11,7 +11,7 @@ describe('AppIcon', () => {
 
     it('renders a svg', () => {
         expect(wrapper.vm.big).toBe(true);
-        expect(wrapper.contains('path')).toBe(true)
+        expect(wrapper.contains('path')).toBe(true);
     });
 
     it('emits click event', () => {

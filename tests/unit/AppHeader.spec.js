@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {mount} from '@vue/test-utils'
-import {state, getters} from '@/store/mutations.js'
+import {getters} from '@/store/mutations.js'
 import AppHeader from '@/components/AppHeader.vue'
 
 Vue.use(Vuex);
@@ -9,6 +9,12 @@ Vue.use(Vuex);
 describe('AppHeader', () => {
     const mutations = {
         openForm: jest.fn()
+    };
+
+    const state = {
+      notes: [{
+        checked: true
+      }]
     };
 
     const store = new Vuex.Store({
@@ -26,5 +32,9 @@ describe('AppHeader', () => {
     it('commits an openForm mutation', () => {
         wrapper.find('.header__add').trigger('click');
         expect(mutations.openForm).toHaveBeenCalled();
+    });
+
+    it('renders actions block if thereAreCheckedNotes', () => {
+      expect(wrapper.contains('.picker')).toBe(true);
     });
 });
