@@ -1,5 +1,5 @@
-import { shallowMount } from '@vue/test-utils'
-import AppTextarea from '@/components/AppTextarea.vue'
+import { shallowMount } from '@vue/test-utils';
+import AppTextarea from '@/components/AppTextarea.vue';
 
 describe('AppTextarea', () => {
   it('AppTextarea emits change event', () => {

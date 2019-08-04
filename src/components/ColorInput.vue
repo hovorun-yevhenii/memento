@@ -23,7 +23,7 @@ import AppIcon from './AppIcon.vue';
 import colors from '../colorConfig';
 
 export default {
-  name: 'ColorPicker',
+  name: 'ColorInput',
   components: {
     AppIcon,
   },
