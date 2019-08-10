@@ -83,7 +83,6 @@ export default {
         }
     }
 
-
     .picker-enter-active,
     .picker-leave-active {
         opacity: 1;

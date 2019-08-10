@@ -44,8 +44,9 @@ export default {
         &, & * {
             font-family: $roboto;
             color: $main-text;
+
             &::selection {
-                background-color: rgba(255,214,0,.35);
+                background-color: rgba(255, 214, 0, .35);
             }
         }
     }

@@ -12,10 +12,8 @@ export default {
   name: 'AppTextarea',
   props: {
     value: {
-      placeholder: {
-        type: String,
-        default: '',
-      },
+      type: String,
+      default: '',
     },
     placeholder: {
       type: String,

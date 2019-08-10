@@ -305,6 +305,7 @@ export default {
             justify-content: space-around;
             width: 266px;
             height: 24px;
+
             & ~ & {
                 margin-top: 24px;
             }
